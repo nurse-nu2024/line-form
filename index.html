@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>บันทึกภารกิจ</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+  <h3>บันทึกภารกิจผู้บริหาร</h3>
+
+  ผู้ปฏิบัติ : <input id="operator"><br><br>
+
+  วันที่ : <input type="date" id="date"><br><br>
+
+  เวลา : <input type="text" id="time" placeholder="10.00 - 11.30"><br><br>
+
+  กิจกรรม : <input id="activity"><br><br>
+
+  สถานที่ : <input id="location"><br><br>
+
+  การแต่งกาย : <input id="dress"><br><br>
+
+  <button onclick="submitForm()">บันทึก</button>
+
+  <script>
+    let userId = "";
+
+    async function main() {
+      await liff.init({ liffId: "YOUR_LIFF_ID" });
+
+      if (liff.isLoggedIn()) {
+        const profile = await liff.getProfile();
+        userId = profile.userId;
+      } else {
+        liff.login();
+      }
+    }
+    main();
+
+    function submitForm() {
+      fetch("https://script.google.com/macros/s/AKfycbzauhrz42W8r-kv7IgnmxyrDBE7j4n9Zf0gM-nZuG6Qh08-7GlZOhWP2AEsOpIKXmfS/exec", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: userId,
+          operator: document.getElementById("operator").value,
+          date: document.getElementById("date").value,
+          time: document.getElementById("time").value,
+          activity: document.getElementById("activity").value,
+          location: document.getElementById("location").value,
+          dress: document.getElementById("dress").value
+        })
+      }).then(() => {
+        alert("บันทึกเรียบร้อย");
+      });
+    }
+  </script>
+</body>
+</html>
