@@ -7,34 +7,17 @@
 <body>
   <h3>บันทึกภารกิจผู้บริหาร</h3>
 
-  ผู้ปฏิบัติ :
-  <select id="operator">
-    <option value="">-- เลือกผู้บริหาร --</option>
-    <option>คณบดี</option>
-    <option>รองคณบดี</option>
-    <option>ผู้ช่วยคณบดี</option>
-  </select>
-  <br><br>
+  ผู้ปฏิบัติ : <input id="operator"><br><br>
 
-  วันที่ :
-  <input type="date" id="date">
-  <br><br>
+  วันที่ : <input type="date" id="date"><br><br>
 
-  เวลา :
-  <input type="text" id="time" placeholder="10.00 - 11.30">
-  <br><br>
+  เวลา : <input type="text" id="time" placeholder="10.00 - 11.30"><br><br>
 
-  กิจกรรม :
-  <input id="activity">
-  <br><br>
+  กิจกรรม : <input id="activity"><br><br>
 
-  สถานที่ :
-  <input id="location">
-  <br><br>
+  สถานที่ : <input id="location"><br><br>
 
-  การแต่งกาย :
-  <input id="dress">
-  <br><br>
+  การแต่งกาย : <input id="dress"><br><br>
 
   <button onclick="submitForm()">บันทึก</button>
 
@@ -54,51 +37,19 @@
     main();
 
     function submitForm() {
-
-      // 🔴 ตรวจสอบก่อนส่ง (กันข้อมูลหาย)
-      if (
-        !document.getElementById("operator").value ||
-        !document.getElementById("date").value ||
-        !document.getElementById("time").value ||
-        !document.getElementById("activity").value
-      ) {
-        alert("กรุณากรอกข้อมูลให้ครบ");
-        return;
-      }
-
-      const data = {
-        userId: userId,
-        operator: document.getElementById("operator").value,
-        date: document.getElementById("date").value,
-        time: document.getElementById("time").value,
-        activity: document.getElementById("activity").value,
-        location: document.getElementById("location").value,
-        dress: document.getElementById("dress").value
-      };
-
       fetch("https://script.google.com/macros/s/AKfycbzauhrz42W8r-kv7IgnmxyrDBE7j4n9Zf0gM-nZuG6Qh08-7GlZOhWP2AEsOpIKXmfS/exec", {
         method: "POST",
-        body: JSON.stringify(data)
-      })
-      .then(() => {
-
-        // ✅ แจ้งเตือนใน LINE
-        if (liff.isInClient()) {
-          liff.sendMessages([{
-            type: "text",
-            text: `📌 บันทึกภารกิจสำเร็จ
-ผู้ปฏิบัติ: ${data.operator}
-วันที่: ${data.date}
-เวลา: ${data.time}
-กิจกรรม: ${data.activity}`
-          }]);
-        }
-
+        body: JSON.stringify({
+          userId: userId,
+          operator: document.getElementById("operator").value,
+          date: document.getElementById("date").value,
+          time: document.getElementById("time").value,
+          activity: document.getElementById("activity").value,
+          location: document.getElementById("location").value,
+          dress: document.getElementById("dress").value
+        })
+      }).then(() => {
         alert("บันทึกเรียบร้อย");
-
-      })
-      .catch(() => {
-        alert("❌ เกิดข้อผิดพลาด ข้อมูลยังไม่ถูกส่ง");
       });
     }
   </script>
