@@ -2,22 +2,32 @@
 <html>
 <head>
   <title>บันทึกภารกิจ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    /* เพิ่มสไตล์เล็กน้อยเพื่อให้ดูง่ายขึ้น */
+    body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+    input, select { width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
+    button { width: 100%; padding: 10px; background-color: #00b900; color: white; border: none; border-radius: 4px; cursor: pointer; }
+  </style>
 </head>
 <body>
   <h3>บันทึกภารกิจผู้บริหาร</h3>
 
-  ผู้ปฏิบัติ : <input id="operator"><br><br>
+  ผู้ปฏิบัติ : 
+  <select id="operator">
+    <option value="">-- กำลังโหลดรายชื่อ... --</option>
+  </select>
 
-  วันที่ : <input type="date" id="date"><br><br>
+  วันที่ : <input type="date" id="date">
 
-  เวลา : <input type="text" id="time" placeholder="10.00 - 11.30"><br><br>
+  เวลา : <input type="text" id="time" placeholder="10.00 - 11.30">
 
-  กิจกรรม : <input id="activity"><br><br>
+  กิจกรรม : <input id="activity">
 
-  สถานที่ : <input id="location"><br><br>
+  สถานที่ : <input id="location">
 
-  การแต่งกาย : <input id="dress"><br><br>
+  การแต่งกาย : <input id="dress">
 
   <button onclick="submitForm()">บันทึก</button>
 
@@ -33,15 +43,39 @@
       } else {
         liff.login();
       }
+
+      // โหลดรายชื่อทันทีที่เปิดหน้าเว็บ
+      loadStaffList();
     }
     main();
 
+    // ฟังก์ชันดึงรายชื่อจาก Apps Script มาใส่ใน Dropdown
+    function loadStaffList() {
+      google.script.run.withSuccessHandler(function(names) {
+        const select = document.getElementById("operator");
+        select.innerHTML = '<option value="">-- เลือกรายชื่อ --</option>'; // ล้างข้อความโหลด
+        
+        names.forEach(function(name) {
+          const option = document.createElement("option");
+          option.value = name;
+          option.text = name;
+          select.appendChild(option);
+        });
+      }).getStaffNames();
+    }
+
     function submitForm() {
+      const operator = document.getElementById("operator").value;
+      if (!operator) {
+        alert("กรุณาเลือกผู้ปฏิบัติ");
+        return;
+      }
+
       fetch("https://script.google.com/macros/s/AKfycbzauhrz42W8r-kv7IgnmxyrDBE7j4n9Zf0gM-nZuG6Qh08-7GlZOhWP2AEsOpIKXmfS/exec", {
         method: "POST",
         body: JSON.stringify({
           userId: userId,
-          operator: document.getElementById("operator").value,
+          operator: operator,
           date: document.getElementById("date").value,
           time: document.getElementById("time").value,
           activity: document.getElementById("activity").value,
@@ -50,6 +84,8 @@
         })
       }).then(() => {
         alert("บันทึกเรียบร้อย");
+      }).catch(err => {
+        alert("เกิดข้อผิดพลาด: " + err);
       });
     }
   </script>
