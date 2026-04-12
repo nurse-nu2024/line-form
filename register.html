@@ -3,118 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ลงทะเบียนบุคลากร - คณะพยาบาลศาสตร์</title>
+    <title>ลงทะเบียนบุคลากร</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Sarabun', sans-serif; background-color: #f0f2f5; }
-        .card { border: none; border-radius: 20px; overflow: hidden; }
-        .bg-navy { background-color: #0056b3; color: white; }
-        .btn-navy { background-color: #0056b3; color: white; border: none; border-radius: 12px; padding: 12px; font-weight: bold; }
-        .btn-navy:hover { background-color: #004494; color: white; }
-        .form-label { font-weight: 700; color: #333; margin-top: 10px; }
-        .form-control, .form-select { border-radius: 10px; padding: 10px; border: 1px solid #ced4da; }
-        #pictureUrl { width: 100px; height: 100px; object-fit: cover; border: 4px solid white; }
+        body { font-family: 'Sarabun', sans-serif; background-color: #f0f2f5; padding: 20px; }
+        .card { border-radius: 15px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .header-navy { background-color: #0056b3; color: white; border-radius: 15px 15px 0 0; padding: 20px; text-align: center; }
+        .btn-submit { background-color: #0056b3; color: white; border-radius: 10px; padding: 12px; width: 100%; border: none; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="container py-4">
-        <div class="card shadow-lg mx-auto" style="max-width: 480px;">
-            <div class="bg-navy text-center py-4">
-                <h4 class="mb-1">ลงทะเบียนเข้าใช้งาน</h4>
-                <p class="small mb-0 opacity-75">สำนักงานคณบดี คณะพยาบาลศาสตร์</p>
-            </div>
-
-            <div class="card-body p-4 text-center">
-                <div id="loading" class="py-5">
-                    <div class="spinner-border text-primary" role="status"></div>
-                    <p class="mt-3">กำลังเตรียมข้อมูล LINE...</p>
+    <div class="card mx-auto" style="max-width: 450px;">
+        <div class="header-navy">
+            <h4 class="mb-0">ลงทะเบียนบุคลากร</h4>
+            <small>คณะพยาบาลศาสตร์ มรภ.อุบลราชธานี</small>
+        </div>
+        <div class="card-body p-4">
+            <form id="regForm">
+                <input type="hidden" id="userId">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">ชื่อ-นามสกุล</label>
+                    <input type="text" class="form-control" id="fullName" required placeholder="กรอกชื่อ-นามสกุลจริง">
                 </div>
-
-                <form id="regForm" style="display: none;" class="text-start">
-                    <div class="text-center mb-4">
-                        <img id="pictureUrl" class="rounded-circle shadow-sm mb-2" src="" alt="Profile">
-                        <h5 id="displayName" class="fw-bold"></h5>
-                    </div>
-
-                    <input type="hidden" id="userId" name="userId">
-
-                    <label class="form-label">ชื่อ-นามสกุล</label>
-                    <input type="text" class="form-control shadow-sm" id="fullName" name="fullName" placeholder="ไม่ต้องใส่คำนำหน้าชื่อ" required>
-
-                    <label class="form-label">เบอร์โทรศัพท์</label>
-                    <input type="tel" class="form-control shadow-sm" id="phone" name="phone" placeholder="08x-xxxxxxx" maxlength="10" required>
-
-                    <label class="form-label">ประเภทบุคลากร</label>
-                    <select class="form-select shadow-sm" id="role" name="role" required>
-                        <option value="" selected disabled>-- กรุณาเลือกประเภท --</option>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">เบอร์โทรศัพท์</label>
+                    <input type="tel" class="form-control" id="phone" required placeholder="08x-xxxxxxx">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">ประเภทบุคลากร</label>
+                    <select class="form-select" id="role" required>
+                        <option value="" disabled selected>-- เลือกประเภท --</option>
                         <option value="พนักงานมหาวิทยาลัยสายวิชาการ(อาจารย์)">พนักงานมหาวิทยาลัยสายวิชาการ(อาจารย์)</option>
                         <option value="อาจารย์คู่สัญญา">อาจารย์คู่สัญญา</option>
                         <option value="พนักงานมหาวิทยาลัยสายสนับสนุน">พนักงานมหาวิทยาลัยสายสนับสนุน</option>
                         <option value="ลูกจ้างชั่วคราว">ลูกจ้างชั่วคราว</option>
                         <option value="ลูกจ้างโครงการ">ลูกจ้างโครงการ</option>
                     </select>
-
-                    <button type="submit" id="submitBtn" class="btn btn-navy w-100 mt-4 shadow">ยืนยันการลงทะเบียน</button>
-                </form>
-            </div>
+                </div>
+                <button type="submit" class="btn-submit mt-3">ยืนยันการลงทะเบียน</button>
+            </form>
         </div>
     </div>
-
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
-        // *** แก้ไขค่าตรงนี้ให้เป็นของคุณ ***
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbztt6kwFLBRpFgOyhon3YbyHWRc5eUM1x6yUyWh8EhBQ9QjKNXytZT6SG4IOcDWPq0/exec";
-        const LIFF_ID = "2009775892-l5k898kx"; 
-
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhs1kwrsybHYmgJ4AwUU4tZV6GmyMOA_1hGUdbgWvvfIIOtQ3JdWdssKnd0zZE-R9W/exec";
         async function main() {
-            try {
-                await liff.init({ liffId: LIFF_ID });
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                } else {
-                    const profile = await liff.getProfile();
-                    document.getElementById('userId').value = profile.userId;
-                    document.getElementById('displayName').innerText = profile.displayName;
-                    document.getElementById('pictureUrl').src = profile.pictureUrl;
-                    document.getElementById('fullName').value = profile.displayName;
-                    
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('regForm').style.display = 'block';
-                }
-            } catch (err) {
-                console.error(err);
-                alert("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE");
-            }
+            await liff.init({ liffId: "2009775892-l5k898kx" });
+            if (!liff.isLoggedIn()) { liff.login(); }
+            else { const profile = await liff.getProfile(); document.getElementById('userId').value = profile.userId; }
         }
         main();
-
         document.getElementById('regForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerText = "กำลังบันทึกข้อมูล...";
-
-            const formData = {
+            const data = {
                 userId: document.getElementById('userId').value,
                 fullName: document.getElementById('fullName').value,
                 phone: document.getElementById('phone').value,
                 role: document.getElementById('role').value
             };
-
-            fetch(WEB_APP_URL, {
-                method: 'POST',
-                body: JSON.stringify(formData)
-            })
-            .then(res => {
-                alert("ลงทะเบียนสำเร็จแล้วค่ะ ✅");
-                liff.closeWindow();
-            })
-            .catch(err => {
-                alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
-                btn.disabled = false;
-                btn.innerText = "ยืนยันการลงทะเบียน";
-            });
+            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) })
+            .then(() => { alert("ลงทะเบียนสำเร็จค่ะ"); liff.closeWindow(); });
         });
     </script>
 </body>
