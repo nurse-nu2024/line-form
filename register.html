@@ -25,7 +25,9 @@
                 
                 <div class="mb-3">
                     <label class="form-label fw-bold">ชื่อ-นามสกุล</label>
-                    <input type="text" class="form-control" id="fullName" required placeholder="กรอกชื่อ-นามสกุลจริง">
+                    <select class="form-select" id="fullName" required>
+                        <option value="">กำลังโหลดรายชื่อ...</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-bold">เบอร์โทรศัพท์</label>
@@ -49,25 +51,47 @@
 
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
-        const SCRIPT_URL = "ใส่ URL ของ Google Apps Script ตรงนี้";
+        // *** อย่าลืมตรวจสอบ URL นี้ว่าลงท้ายด้วย /exec และ LIFF ID ว่าถูกต้อง ***
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz55LDQpk-9jsNFhzvrkd-1j7BeLKr28a7e1sTDpMK79FotWzDgGOW_WwY5wqd1KoER/exec";
 
         async function main() {
-            await liff.init({ liffId: "ใส่ LIFF ID ตรงนี้" });
+            await liff.init({ liffId: "2009775892-l5k898kx" });
             if (!liff.isLoggedIn()) { 
                 liff.login(); 
             } else { 
                 const profile = await liff.getProfile(); 
                 document.getElementById('userId').value = profile.userId; 
+                loadStaffNames(); // <--- ต้องมีคำสั่งให้โหลดรายชื่อมาแสดง
             }
         }
         main();
 
-        // ใช้ addEventListener แทนการใช้ onclick ใน HTML
+        // ฟังก์ชันสำหรับดึงรายชื่อจาก Google Sheets มาใส่ใน Select
+        function loadStaffNames() {
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "getStaffNames" })
+            })
+            .then(res => res.json())
+            .then(names => {
+                const select = document.getElementById("fullName");
+                select.innerHTML = '<option value="">-- เลือกรายชื่อของคุณ --</option>';
+                names.forEach(name => {
+                    let opt = document.createElement("option");
+                    opt.value = name; opt.text = name;
+                    select.appendChild(opt);
+                });
+            })
+            .catch(err => {
+                document.getElementById("fullName").innerHTML = '<option value="">โหลดข้อมูลไม่สำเร็จ</option>';
+            });
+        }
+
         document.getElementById('regForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const data = {
-                action: "register", // เพิ่ม action เพื่อให้หลังบ้านแยกแยะได้
+                action: "register", 
                 userId: document.getElementById('userId').value,
                 fullName: document.getElementById('fullName').value,
                 phone: document.getElementById('phone').value,
