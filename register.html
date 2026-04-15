@@ -9,7 +9,8 @@
         body { font-family: 'Sarabun', sans-serif; background-color: #f0f2f5; padding: 20px; }
         .card { border-radius: 15px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .header-navy { background-color: #0056b3; color: white; border-radius: 15px 15px 0 0; padding: 20px; text-align: center; }
-        .btn-submit { background-color: #0056b3; color: white; border-radius: 10px; padding: 12px; width: 100%; border: none; font-weight: bold; }
+        .btn-submit { background-color: #0056b3; color: white; border-radius: 10px; padding: 12px; width: 100%; border: none; font-weight: bold; transition: 0.3s; }
+        .btn-submit:hover { background-color: #004494; transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -21,6 +22,7 @@
         <div class="card-body p-4">
             <form id="regForm">
                 <input type="hidden" id="userId">
+                
                 <div class="mb-3">
                     <label class="form-label fw-bold">ชื่อ-นามสกุล</label>
                     <input type="text" class="form-control" id="fullName" required placeholder="กรอกชื่อ-นามสกุลจริง">
@@ -44,25 +46,44 @@
             </form>
         </div>
     </div>
+
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhs1kwrsybHYmgJ4AwUU4tZV6GmyMOA_1hGUdbgWvvfIIOtQ3JdWdssKnd0zZE-R9W/exec";
+        const SCRIPT_URL = "ใส่ URL ของ Google Apps Script ตรงนี้";
+
         async function main() {
-            await liff.init({ liffId: "2009775892-l5k898kx" });
-            if (!liff.isLoggedIn()) { liff.login(); }
-            else { const profile = await liff.getProfile(); document.getElementById('userId').value = profile.userId; }
+            await liff.init({ liffId: "ใส่ LIFF ID ตรงนี้" });
+            if (!liff.isLoggedIn()) { 
+                liff.login(); 
+            } else { 
+                const profile = await liff.getProfile(); 
+                document.getElementById('userId').value = profile.userId; 
+            }
         }
         main();
-        document.getElementById('regForm').addEventListener('submit', function(e) {
+
+        // ใช้ addEventListener แทนการใช้ onclick ใน HTML
+        document.getElementById('regForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
             const data = {
+                action: "register", // เพิ่ม action เพื่อให้หลังบ้านแยกแยะได้
                 userId: document.getElementById('userId').value,
                 fullName: document.getElementById('fullName').value,
                 phone: document.getElementById('phone').value,
                 role: document.getElementById('role').value
             };
-            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) })
-            .then(() => { alert("ลงทะเบียนสำเร็จค่ะ"); liff.closeWindow(); });
+
+            try {
+                await fetch(SCRIPT_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify(data) 
+                });
+                alert("ลงทะเบียนสำเร็จเรียบร้อยแล้วค่ะ");
+                liff.closeWindow();
+            } catch (error) {
+                alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+            }
         });
     </script>
 </body>
